@@ -1,1 +1,89 @@
-/* Add styles here */
+/* style.css */
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: linear-gradient(to right, #fa709a 0%, #fee140 100%);
+}
+
+.container {
+    text-align: center;
+}
+
+.card {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+h1 {
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 28px;
+}
+
+.numbers-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Spacing between balls */
+    margin-bottom: 30px;
+    flex-wrap: wrap; /* Allows balls to wrap on smaller screens */
+}
+
+.number-ball {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.number-ball:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Color classes for the balls */
+.color-1 { background: linear-gradient(135deg, #ffb347, #ffcc33); } /* Yellow */
+.color-2 { background: linear-gradient(135deg, #4b79a1, #283e51); } /* Blue */
+.color-3 { background: linear-gradient(135deg, #ff416c, #ff4b2b); } /* Red */
+.color-4 { background: linear-gradient(135deg, #8e9eab, #eef2f3); color: #333; } /* Gray */
+.color-5 { background: linear-gradient(135deg, #1d976c, #93f9b9); } /* Green */
+
+#generate-btn {
+    background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+#generate-btn:hover {
+    box-shadow: 0 8px 25px rgba(37, 117, 252, 0.5);
+    transform: translateY(-2px);
+}
+
+#generate-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
