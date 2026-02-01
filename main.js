@@ -8,40 +8,52 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Mock Data ---
     const influencers = [
         {
-            name: 'Anthony Ko',
-            handle: '@anthonykodev',
-            platform: 'Twitter',
-            followers: 1200000,
-            topicalityScore: 95,
-            profilePic: 'https://i.pravatar.cc/150?u=anthony',
-            headerPic: 'https://i.pravatar.cc/600/200?u=header_anthony'
-        },
-        {
-            name: 'Jane Doe',
-            handle: '@janedoe',
+            name: 'Wellness Wendy',
+            handle: '@wellnesswendy',
             platform: 'Instagram',
-            followers: 2500000,
-            topicalityScore: 92,
-            profilePic: 'https://i.pravatar.cc/150?u=jane',
-            headerPic: 'https://i.pravatar.cc/600/200?u=header_jane'
+            followers: 15000,
+            health_score: 90,
+            intent_score: 75,
+            total_score: 83,
+            category_tags: ['wellness', 'sleep', 'protein'],
+            profilePic: 'https://i.pravatar.cc/150?u=wendy',
+            headerPic: 'https://i.pravatar.cc/600/200?u=header_wendy'
         },
         {
-            name: 'John Smith',
-            handle: '@johnsmith',
+            name: 'Techie Tom',
+            handle: '@techtom',
             platform: 'Twitter',
-            followers: 850000,
-            topicalityScore: 88,
-            profilePic: 'https://i.pravatar.cc/150?u=john',
-            headerPic: 'https://i.pravatar.cc/600/200?u=header_john'
+            followers: 25000,
+            health_score: 85,
+            intent_score: 88,
+            total_score: 86,
+            category_tags: ['tech', 'gadgets', 'ai'],
+            profilePic: 'https://i.pravatar.cc/150?u=tom',
+            headerPic: 'https://i.pravatar.cc/600/200?u=header_tom'
         },
         {
-            name: 'Emily White',
-            handle: '@emilywhite',
+            name: 'Foodie Fiona',
+            handle: '@foodiefiona',
             platform: 'Instagram',
-            followers: 3200000,
-            topicalityScore: 98,
-            profilePic: 'https://i.pravatar.cc/150?u=emily',
-            headerPic: 'https://i.pravatar.cc/600/200?u=header_emily'
+            followers: 55000,
+            health_score: 95,
+            intent_score: 80,
+            total_score: 88,
+            category_tags: ['food', 'recipes', 'healthy-eating'],
+            profilePic: 'https://i.pravatar.cc/150?u=fiona',
+            headerPic: 'https://i.pravatar.cc/600/200?u=header_fiona'
+        },
+        {
+            name: 'Senior Fitness Sam',
+            handle: '@seniorsam',
+            platform: 'TikTok',
+            followers: 42000,
+            health_score: 88,
+            intent_score: 92,
+            total_score: 90,
+            category_tags: ['senior', 'fitness', 'wellness'],
+            profilePic: 'https://i.pravatar.cc/150?u=sam',
+            headerPic: 'https://i.pravatar.cc/600/200?u=header_sam'
         }
     ];
 
@@ -68,29 +80,42 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayInfluencers(influencerList) {
         resultsContainer.innerHTML = '';
         if (influencerList.length === 0) {
-            resultsContainer.innerHTML = '<p>No influencers found.</p>';
+            resultsContainer.innerHTML = '<p>No creators found.</p>';
             return;
         }
 
         influencerList.forEach(influencer => {
             const card = document.createElement('div');
             card.className = 'influencer-card';
+            const platformIconUrl = {
+                'Twitter': 'https://abs.twimg.com/icons/apple-touch-icon-192x192.png',
+                'Instagram': 'https://instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png',
+                'TikTok': 'https://sf-tb-sg.ibytedtos.com/obj/tiktok-web/tiktok/web/node/_next/static/images/logo-dark-e951266221f66b533a1040523fdad930.svg'
+            }[influencer.platform] || '';
+
             card.innerHTML = `
                 <div class="card-header" style="background-image: url('${influencer.headerPic}')">
-                    <img class="platform-icon" src="${influencer.platform === 'Twitter' ? 'https://abs.twimg.com/icons/apple-touch-icon-192x192.png' : 'https://instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png'}" alt="${influencer.platform}">
+                    <img class="platform-icon" src="${platformIconUrl}" alt="${influencer.platform}">
                     <img class="profile-pic" src="${influencer.profilePic}" alt="${influencer.name}">
                 </div>
                 <div class="card-body">
                     <h3 class="name">${influencer.name}</h3>
                     <p class="handle">${influencer.handle}</p>
+                    <div class="tags-container">
+                        ${influencer.category_tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
                     <div class="stats">
                         <div class="stat">
-                            <span class="stat-value">${(influencer.followers / 1000000).toFixed(1)}M</span>
+                            <span class="stat-value">${(influencer.followers / 1000).toFixed(1)}K</span>
                             <span class="stat-label">Followers</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-value">${influencer.topicalityScore}</span>
-                            <span class="stat-label">Topicality</span>
+                            <span class="stat-value">${influencer.health_score}</span>
+                            <span class="stat-label">Health</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">${influencer.intent_score}</span>
+                            <span class="stat-label">Intent</span>
                         </div>
                     </div>
                 </div>
@@ -104,7 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchTerm = searchInput.value.toLowerCase();
         const filteredInfluencers = influencers.filter(influencer =>
             influencer.name.toLowerCase().includes(searchTerm) ||
-            influencer.handle.toLowerCase().includes(searchTerm)
+            influencer.handle.toLowerCase().includes(searchTerm) ||
+            influencer.category_tags.some(tag => tag.toLowerCase().includes(searchTerm))
         );
         displayInfluencers(filteredInfluencers);
     }
