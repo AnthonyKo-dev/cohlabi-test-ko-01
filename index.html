@@ -3,30 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Micro Creator Radar (Insta + X)</title>
+    <title>Micro Creator Radar Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button id="theme-toggle-btn">🌙</button>
-    <div class="container">
-        <header>
-            <h1>Micro Creator Radar</h1>
-            <p>Keyword-based discovery for Instagram & X</p>
-        </header>
-        <div class="search-container">
-            <div class="platform-selector">
-                <select id="platform-select">
-                    <option value="all">All Platforms</option>
-                    <option value="Instagram">Instagram</option>
-                    <option value="X">X</option>
-                </select>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h1 class="logo">MCR</h1>
+            <div class="filter-controls">
+                <h2>Filters</h2>
+                <div class="filter-group">
+                    <label for="search-input">Keyword</label>
+                    <input type="text" id="search-input" placeholder="Name, handle, tag...">
+                </div>
+                <div class="filter-group">
+                    <label for="platform-select">Platform</label>
+                    <select id="platform-select">
+                        <option value="all">All Platforms</option>
+                        <option value="Instagram">Instagram</option>
+                        <option value="X">X</option>
+                    </select>
+                </div>
             </div>
-            <input type="text" id="search-input" placeholder="Enter keywords or hashtags...">
-            <button id="search-btn">Search</button>
-        </div>
-        <div id="results-container" class="results-container">
-            <!-- Creator cards will be generated here -->
-        </div>
+            <button id="theme-toggle-btn">🌙</button>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <h2>Creator Dashboard</h2>
+            </header>
+            <section class="stats-overview">
+                <div class="stat-card" id="total-creators-card">
+                    <h4>Total Creators</h4>
+                    <p id="total-creators-value">0</p>
+                </div>
+                <div class="stat-card" id="avg-outlier-card">
+                    <h4>Avg. Outlier Score</h4>
+                    <p id="avg-outlier-value">0</p>
+                </div>
+                <div class="stat-card" id="avg-health-card">
+                    <h4>Avg. Health Score</h4>
+                    <p id="avg-health-value">0</p>
+                </div>
+            </section>
+            <section class="radar-section">
+                <h3>Creator Radar</h3>
+                <div class="radar-container" id="radar-container">
+                    <!-- Radar (scatter plot) will be generated here -->
+                    <div class="radar-axis-label y-axis">Outlier Score</div>
+                    <div class="radar-axis-label x-axis">Health Score</div>
+                </div>
+            </section>
+        </main>
     </div>
     <script src="main.js"></script>
 </body>

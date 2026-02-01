@@ -1,238 +1,203 @@
 :root {
-    --bg-color: #f0f2f5;
-    --card-bg-color: white;
-    --text-color: #333;
-    --primary-color: #3b5998; /* Facebook Blue, good for a social media theme */
-    --secondary-color: #1da1f2; /* Twitter Blue */
+    --bg-color: #f4f7fa;
+    --sidebar-bg: #ffffff;
+    --card-bg: #ffffff;
+    --text-color: #334155;
+    --text-light: #64748b;
+    --border-color: #e2e8f0;
+    --primary-color: #3b82f6;
+    --platform-x-color: #000000;
+    --platform-instagram-color: #c13584;
 }
 
 body.dark-mode {
-    --bg-color: #121212;
-    --card-bg-color: #1e1e1e;
-    --text-color: #e0e0e0;
+    --bg-color: #0f172a;
+    --sidebar-bg: #1e293b;
+    --card-bg: #1e293b;
+    --text-color: #e2e8f0;
+    --text-light: #94a3b8;
+    --border-color: #334155;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-    margin: 0;
-    padding: 20px;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 280px;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    font-size: 2em;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: 40px;
+}
+
+.filter-controls h2 {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.filter-group label {
+    display: block;
+    font-size: 0.9em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-light);
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1em;
 }
 
 #theme-toggle-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--card-bg-color);
-    color: var(--text-color);
-    border: 1px solid var(--text-color);
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-    border-radius: 50%;
+    margin-top: auto;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
     cursor: pointer;
-    z-index: 1000;
-    transition: background 0.3s ease, color 0.3s ease;
+    font-size: 1em;
 }
 
-#theme-toggle-btn:hover {
-    background: var(--text-color);
-    color: var(--card-bg-color);
+/* --- Main Content --- */
+.main-content {
+    flex-grow: 1;
+    padding: 24px 48px;
+    overflow-y: auto;
 }
 
-.container {
-    max-width: 800px;
-    margin: 40px auto;
+.main-header h2 {
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+/* --- Stats Overview --- */
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
     padding: 20px;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 40px;
+.stat-card h4 {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 8px;
 }
 
-header h1 {
-    font-size: 3em;
+.stat-card p {
+    font-size: 2em;
+    font-weight: 700;
     color: var(--primary-color);
-    margin-bottom: 10px;
 }
 
-body.dark-mode header h1 {
-    color: var(--secondary-color);
+/* --- Radar Section --- */
+.radar-section h3 {
+    font-size: 1.4em;
+    margin-bottom: 20px;
 }
 
-header p {
-    font-size: 1.2em;
-    color: #666;
-}
-
-body.dark-mode header p {
-    color: #aaa;
-}
-
-.search-container {
-    display: flex;
-    margin-bottom: 40px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border-radius: 50px;
-    overflow: hidden; /* To make the border-radius apply to children */
-}
-
-.platform-selector {
-    background-color: var(--card-bg-color);
-    border-right: 1px solid var(--bg-color);
-}
-
-body.dark-mode .platform-selector {
-    border-right: 1px solid #333;
-}
-
-#platform-select {
-    background: transparent;
-    border: none;
-    padding: 15px;
-    font-size: 1.1em;
-    color: var(--text-color);
-    outline: none;
-    -webkit-appearance: none; /* Removes default browser styling */
-    -moz-appearance: none;
-    appearance: none;
-}
-
-#search-input {
-    flex-grow: 1;
-    border: none;
-    padding: 15px 25px;
-    font-size: 1.1em;
-    border-radius: 0; /* Updated from 50px 0 0 50px */
-    background-color: var(--card-bg-color);
-    color: var(--text-color);
-    outline: none;
-}
-
-#search-btn {
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.1em;
-    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-    color: white;
-    cursor: pointer;
-    border-radius: 0 50px 50px 0;
-    transition: background 0.3s ease;
-}
-
-#search-btn:hover {
-    opacity: 0.9;
-}
-
-.results-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.influencer-card {
-    background-color: var(--card-bg-color);
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-}
-
-.influencer-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-}
-
-.influencer-card .card-header {
-    background-size: cover;
-    background-position: center;
-    height: 120px;
+.radar-container {
     position: relative;
+    width: 100%;
+    height: 500px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-image:
+        linear-gradient(var(--border-color) 1px, transparent 1px),
+        linear-gradient(to right, var(--border-color) 1px, transparent 1px);
+    background-size: 50px 50px;
 }
 
-.influencer-card .platform-icon {
+.radar-axis-label {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+    color: var(--text-light);
+    font-size: 0.8em;
+    font-weight: 600;
 }
 
-.influencer-card .profile-pic {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 4px solid var(--card-bg-color);
-    position: absolute;
-    bottom: -40px;
+.y-axis {
+    left: -8px;
+    top: 50%;
+    transform: rotate(-90deg) translateY(-50%);
+}
+
+.x-axis {
+    bottom: -20px;
     left: 50%;
     transform: translateX(-50%);
 }
 
-.influencer-card .card-body {
-    padding: 50px 20px 20px;
-    text-align: center;
+.creator-dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--card-bg);
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 
-.influencer-card .name {
-    font-size: 1.4em;
-    font-weight: bold;
-    margin: 0;
+.creator-dot:hover {
+    transform: scale(1.5);
+    z-index: 10;
 }
 
-.influencer-card .handle {
-    color: #777;
-    margin: 5px 0 15px;
-}
-
-.tags-container {
-    margin-bottom: 15px;
-}
-
-.tag {
-    display: inline-block;
-    background-color: #eee;
-    color: #555;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.8em;
-    margin: 2px;
-}
-
-body.dark-mode .tag {
+.radar-tooltip {
+    position: absolute;
     background-color: #333;
-    color: #ccc;
-}
-
-body.dark-mode .influencer-card .handle {
-    color: #aaa;
-}
-
-.influencer-card .stats {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 15px;
-}
-
-.influencer-card .stat {
-    text-align: center;
-}
-
-.influencer-card .stat-value {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.influencer-card .stat-label {
-    font-size: 0.8em;
-    color: #777;
-}
-
-body.dark-mode .influencer-card .stat-label {
-    color: #aaa;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    white-space: nowrap;
+    z-index: 20;
+    display: none; /* Hidden by default */
+    pointer-events: none; /* Tooltip doesn't block mouse events */
+    transform: translate(-50%, -110%);
 }
