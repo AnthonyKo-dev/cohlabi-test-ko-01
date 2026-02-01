@@ -25,11 +25,32 @@
                     </select>
                 </div>
             </div>
+            <div class="filter-group">
+                <label for="intent-min-slider">Min Intent Score: <span id="intent-min-value">50</span></label>
+                <input type="range" id="intent-min-slider" min="0" max="100" value="50">
+            </div>
+            <div class="filter-group">
+                <label for="reach-min-slider">Min Reach Efficiency: <span id="reach-min-value">0.01</span></label>
+                <input type="range" id="reach-min-slider" min="0" max="0.1" value="0.01" step="0.001">
+            </div>
+            <div class="filter-group">
+                <input type="checkbox" id="exclude-fraud" checked>
+                <label for="exclude-fraud">Exclude Fraud Suspects</label>
+            </div>
+            <div class="filter-group">
+                <input type="checkbox" id="exclude-inactive" checked>
+                <label for="exclude-inactive">Exclude Inactive</label>
+            </div>
+            <div class="filter-group">
+                <input type="checkbox" id="exclude-risk" checked>
+                <label for="exclude-risk">Exclude Brand Safety Risk</label>
+            </div>
             <button id="theme-toggle-btn">🌙</button>
         </aside>
         <main class="main-content">
             <header class="main-header">
                 <h2>Creator Dashboard</h2>
+                <button id="view-list-btn" class="secondary-btn">View as List</button>
             </header>
             <section class="stats-overview">
                 <div class="stat-card" id="total-creators-card">
@@ -44,13 +65,26 @@
                     <h4>Avg. Health Score</h4>
                     <p id="avg-health-value">0</p>
                 </div>
+                <div class="stat-card high-priority-card">
+                    <h4>High Priority</h4>
+                    <p id="high-priority-value">0</p>
+                </div>
             </section>
             <section class="radar-section">
-                <h3>Creator Radar</h3>
+                <div class="radar-header">
+                    <h3>Creator Radar Scatter</h3>
+                    <div class="platform-tabs">
+                        <button class="platform-tab active" data-platform="all">All</button>
+                        <button class="platform-tab" data-platform="Instagram">Instagram</button>
+                        <button class="platform-tab" data-platform="X">X</button>
+                    </div>
+                </div>
                 <div class="radar-container" id="radar-container">
-                    <!-- Radar (scatter plot) will be generated here -->
-                    <div class="radar-axis-label y-axis">Outlier Score</div>
-                    <div class="radar-axis-label x-axis">Health Score</div>
+                    <div class="radar-axis-label y-axis">Commercial Intent Score</div>
+                    <div class="radar-axis-label x-axis">Reach Efficiency</div>
+                    <div class="quadrant-line horizontal" style="bottom: 70%;"></div>
+                    <div class="quadrant-line vertical" style="left: 20%;"></div> <!-- Adjusted to 20% for 0.02, assuming a max of 0.1 -->
+                    <div class="high-priority-label">High Priority</div>
                 </div>
             </section>
         </main>
