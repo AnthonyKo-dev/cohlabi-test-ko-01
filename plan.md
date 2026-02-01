@@ -1,314 +1,246 @@
-# Micro Creator Radar MVP — plan.md
-(ANP / COHLABI 내부용)  
-목적: Instagram / TikTok / X 등 소셜 채널에서 **가설 검증에 적합한 ‘마이크로 크리에이터’ 후보를 빠르게 발굴·평가·풀로 관리**할 수 있는 웹 MVP를 Firebase(Studio)로 구축한다.  
-핵심 원칙: **“발굴(Discovery)”이 아니라 “실험 성공률”을 높이는 레이더**가 되어야 한다.
+# Micro Creator Radar MVP — plan.md (Instagram + X)
+(ANP / COHLABI 내부용)
+
+## 중요 고지(필수)
+- Instagram / X(구 Twitter) 데이터 수집은 **각 플랫폼의 약관/정책을 준수**해야 합니다.
+- 본 plan은 **공식 API(및 합법적 데이터 소스/사용자 제공 데이터)** 기반 구현을 전제로 작성합니다.
+- “무단 스크래핑/크롤링으로 전체 사용자 풀을 훑는 방식”은 정책/법적 리스크가 매우 커서 MVP에서도 권장하지 않습니다.
+- 대신 **(1) 키워드/해시태그 기반 검색 → (2) 후보 계정 확장(그래프 확장) → (3) 계정/콘텐츠 지표 평가**의 합법적 흐름으로 MVP를 설계합니다.
 
 ---
 
-## 0) MVP 정의 (한 문장)
-**“마이크로 크리에이터 후보를 수집(또는 업로드) → 자동 스코어링(Commercial Intent / Health) → 리스트·필터·상세 보기 → 풀(Watchlist)로 저장 → 실험 투입/성과 기록까지 연결”**하는 내부 운영용 웹앱.
+## 0) MVP 한 문장 정의
+카테고리 키워드(예: 뷰티, 스낵, F&B, 수면 등)를 입력하면, **Instagram/X에서 관련 콘텐츠를 검색(합법적 커넥터)** → 계정 후보를 수집 → 마이크로 크리에이터 기준으로 1차 필터링(룰) → 상위 후보를 상세 화면에서 검토/Watchlist 관리 → (옵션) Slack으로 공유까지 가능한 내부 웹앱.
 
 ---
 
-## 1) 성공 기준 (MVP KPI)
-- 운영 효율:
-  - (KPI1) 후보 수집/등록 → “검증 투입”까지 평균 리드타임 1일 이내
-  - (KPI2) 후보 100명 중 “실험 투입 가능” 판정 비율 ≥ 20%
-- 모델 효용:
-  - (KPI3) 스코어 상위 20%의 실험 성공률이 하위 20% 대비 유의미하게 높음(최소 2배 목표)
-- 활용성:
-  - (KPI4) 영업/운영팀이 주 1회 이상 사용(Active users)
+## 1) MVP 목표 및 성공 기준(KPI)
+### 1.1 MVP 목표
+- “마이크로 크리에이터 콘텐츠가 매출전환에 기여한다” 가설 검증을 위한 **실험 후보 풀을 빠르게 구성**
+- 플랫폼별 특성을 반영한 **마이크로 기준 + ‘반응 이상치’ 기반 선별**
+- (후속) 실험/성과 데이터가 쌓이면 레이더의 추천 정확도를 강화
+
+### 1.2 KPI(운영/정확도)
+- (KPI1) 키워드 입력 → 후보 50명 생성까지 10분 이내(배치 기반이면 1회 실행당 50명 이상)
+- (KPI2) 후보 100명 중 “SHORTLIST(검토 가치)” ≥ 20%
+- (KPI3) 상위 20% 스코어 그룹이 하위 20% 대비 “실험 성과(클릭/주문/매출)”가 유의미하게 높음(최소 2배 목표)
+- (KPI4) 주간 Top 후보 10~20명 리스트를 팀이 실제로 사용(주 1회 이상)
 
 ---
 
-## 2) 사용자/권한
-### 2.1 사용자
-- **Ops(운영)**: 후보 발굴/검증, 풀 관리, 크리에이터 커뮤니케이션 전 단계 준비
-- **Sales(영업)**: 카테고리별 강한 풀을 근거로 제안/수주, 실험 결과 레퍼런스 활용
-- **Admin(관리자)**: 데이터 소스/스코어링 룰 관리, 사용자 권한 관리
-
-### 2.2 권한(RBAC)
+## 2) 사용자/권한(RBAC)
 - Viewer: 읽기(리스트/상세/리포트)
-- Editor: 후보 추가/수정, Watchlist 관리, 상태 변경
-- Admin: 사용자/설정, 스코어링 파라미터, 데이터 import/export
+- Editor: 후보 추가/수정, Watchlist 관리, 상태 변경, Slack 전송
+- Admin: 사용자/설정, 스코어링 파라미터/룰 관리, API 연결 설정
 
 ---
 
-## 3) MVP 범위 (Scope)
+## 3) MVP 범위(Scope)
 ### 3.1 MVP에서 “한다”
-1) **후보 등록**
-   - (A) 수동 등록(링크 붙여넣기 + 기본 정보 입력)
-   - (B) CSV 업로드(초기 가장 현실적)  
-   - (옵션) 크롤링/스크래핑은 MVP에서 “플러그인 형태”로만 설계(법/약관 리스크)
-2) **자동 스코어링(2축)**
-   - **Health Score**: 계정 건강도(성장/참여/이상치)
-   - **Commercial Intent Score**: 전환 가능성(CTA/링크 습관/제품 언급/댓글 신호)
-3) **탐색 UI**
-   - 리스트/필터/정렬/검색
-   - 상세 페이지(최근 콘텐츠 스냅샷, 요약, 스코어 설명)
-4) **풀(Watchlist) 운영**
-   - 팀/캠페인별 Watchlist 생성
-   - 후보를 Watchlist에 추가/제거
-   - 상태(NEW → SHORTLIST → CONTACTED → ACTIVE → PAUSED) 관리
-5) **실험 투입 기록(최소)**
-   - 후보가 어떤 프로젝트/오퍼에 투입되었는지 기록
-   - 결과 입력(수치 최소: 클릭/주문/매출/CPA/ROAS 중 가능한 것)
-6) **리포트(최소)**
-   - 스코어 구간별 실험 성과 비교(“레이더가 유효한가?” 증명용)
+1) **키워드 기반 탐색(Discovery)**
+   - 키워드/해시태그를 입력하면 플랫폼 커넥터가 검색 실행
+   - 결과(콘텐츠/게시물)에서 “작성자 계정”을 후보로 수집
+2) **플랫폼별 1차 룰 필터(마이크로 + 반응 이상치)**
+   - X/Instagram 각각 다른 룰 적용
+3) **2차 콘텐츠 샘플링**
+   - 계정당 상위 반응 콘텐츠 3~5개 저장(비용/속도 최적화)
+4) **스코어링**
+   - Health Score(활동성/지속성/이상치)
+   - Engagement Outlier Score(팔로워 대비 반응 이상치)
+   - (옵션) Commercial Intent Score(Gemini 텍스트 분석 기반)
+5) **리스트/필터/상세/Watchlist 운영**
+6) **Slack 연동(옵션/설정)**
+   - Slack Incoming Webhook URL을 Admin에서 설정
+   - 리스트/상세에서 “Slack 공유” 버튼 제공(배치 자동전송은 후속 단계)
+7) **배치 실행(옵션)**
+   - MVP에서는 “수동 실행(버튼)” + (가능하면) “하루 1회 스케줄 실행” 중 택1
 
 ### 3.2 MVP에서 “안 한다(Non-goals)”
-- 자동 DM 발송/메시징 자동화
-- 결제/정산 레일(후속 단계)
-- 플랫폼 공식 API 통합(승인/정책/개발 비용 이슈) — 단, 구조는 열어두기
-- 복잡한 멀티 터치 어트리뷰션(후속 단계)
+- 무단 스크래핑/우회 수집(로그인/세션 탈취/봇 회피 등)
+- DM 자동 발송, 결제/정산 레일
+- 복잡한 멀티 터치 어트리뷰션
 
 ---
 
-## 4) 데이터 설계 (입력/출력)
-### 4.1 후보 입력 필드(최소)
-- platform: instagram | tiktok | x
-- handle / profile_url
-- category_tags: (예: 웰니스, 수면, 단백질, 시니어, 이너뷰티 등)
-- country/language (선택)
-- notes (운영 메모)
-- **metrics (가능하면)**
-  - followers, following, posts_count
-  - avg_views_lastN, avg_likes_lastN, avg_comments_lastN (없으면 공란 허용)
-  - last_post_date
-- **content samples (선택)**
-  - 최근 콘텐츠 링크 1~5개 (텍스트/캡션을 수동 입력 가능)
+## 4) 데이터 수집 방식(커넥터 설계)
+MVP는 “전체 사용자”를 훑지 않고, **검색 결과에서 계정을 수집**하는 방식으로 구현합니다.
 
-### 4.2 출력(자동 산출)
-- health_score (0–100)
-- intent_score (0–100)
-- total_score = 가중합(초기: 0.5/0.5)
-- score_explain (왜 이렇게 나왔는지 짧은 설명)
-- flags: {fraud_suspect, brand_safety_risk, inactive, outlier}
+### 4.1 X 커넥터(권장)
+- X API(유료/권한 필요)를 통해:
+  - Recent Search(키워드/해시태그) → 트윗 목록
+  - 트윗 작성자 user_id → 사용자 정보 조회
+  - (가능하면) 사용자 타임라인/최근 트윗 20개 조회로 지표 계산
+- MVP 입력: 키워드, 기간(최근 7일), 언어(ko/en), 제외 키워드, 최소/최대 팔로워
 
----
-
-## 5) 스코어링 로직 (MVP 버전)
-> MVP에서는 **룰 기반 + Gemini 요약/분류** 혼합이 현실적이다.  
-> 이후 데이터가 쌓이면 ML/랭킹으로 고도화.
-
-### 5.1 Health Score (룰 기반 예시)
-- 최근 게시: last_post_date가 14일 이내면 +15, 30일 이내면 +8, 그 외 -10
-- 참여율(가능 시): (avg_likes + avg_comments) / followers
-  - 3% 이상 +20, 1% 이상 +10, 0.3% 미만 -10
-- 성장률(가능 시): 최근 30일 followers 증가율
-  - +10% 이상 +15, 음수면 -15
-- 이상치 탐지(간단):
-  - followers 대비 댓글/좋아요 비율이 극단적이면 fraud_suspect
-
-### 5.2 Commercial Intent Score (Gemini + 룰)
-#### 입력(텍스트 중심, MVP)
-- 최근 캡션/해시태그/댓글 대표 샘플(수동 입력 또는 CSV)
-- 콘텐츠 유형 태그(리뷰, 루틴, 비교, 언박싱, 추천, ASMR 등)
-
-#### Gemini 사용(추천)
-- 분류: “구매 의도 신호(CTA, 링크 유도, 제품 효능 언급, 사용 전후, 가격/구매처 언급)” 유무
-- 요약: 콘텐츠 톤/타깃/제품 카테고리 적합성
-- 리스크: 과장광고/의학적 주장 가능성(웰니스는 특히 중요)
-
-#### Intent 룰 예시
-- 캡션에 “링크/프로필/구매/할인/쿠폰” 등 CTA 단어 포함 → +15
-- ‘루틴/습관’형 콘텐츠(반복구매 가능 카테고리와 적합) → +10
-- ‘비포애프터/효능 단정’ 등 리스크 표현 → brand_safety_risk 플래그 + 감점
+### 4.2 Instagram 커넥터(현실적 제약 반영)
+- Instagram은 “전체 사용자 검색”이 공식적으로 제한적일 수 있습니다.
+- MVP 대안(합법 범위 내):
+  - Instagram Graph API(비즈니스/크리에이터 계정 및 권한 필요)에서 가능한 범위:
+    - Hashtag Search → Recent Media / Top Media
+    - Media에서 작성자/계정 정보를 가능한 범위로 수집
+- 만약 Graph API로 작성자/팔로워 지표 접근이 제한되면:
+  - (대안 A) **사용자 제공 데이터(수동 등록/CSV)**를 병행
+  - (대안 B) **공식/합법적 데이터 제공 파트너(서드파티)** 연동을 추후 단계로 열어둠
+- MVP는 “Instagram 커넥터”를 추상화해, 추후 교체 가능하도록 설계합니다.
 
 ---
 
-## 6) 화면/UX 기획 (웹페이지에서 보여지는 방식)
-### 6.1 정보구조(IA)
+## 5) 플랫폼별 “마이크로 크리에이터” 1차 필터 룰(MVP)
+> 아래 기준은 **초기 가설검증용**으로 단순화한 것이며, Admin에서 파라미터로 조정 가능해야 합니다.
+
+### 5.1 X(구 Twitter) — 룰 기반
+- 팔로워: **500 ~ 50,000**
+- 최근 N개 트윗(N=20) 기준(가능하면 API로 수집):
+  - 평균 좋아요 / 팔로워 ≥ **3%**
+  - 단일 트윗 좋아요가 계정 평균의 **3배 이상(outlier)**인 트윗 존재
+  - 이미지/미디어 포함 트윗 비율 ≥ **50%** (콘텐츠 중심 계정)
+- 통과 목적: “작은 계정인데 반응이 튀는 계정”만 선별
+
+### 5.2 Instagram — 룰 기반(가능 지표에 맞춰 유연)
+- 팔로워: **1,000 ~ 100,000**
+- 최근 게시물/릴스 기준(가능하면):
+  - 릴스 평균 조회수 / 팔로워 ≥ **1.5**
+  - 이미지 게시물 좋아요율(좋아요/팔로워) ≥ **5%**
+  - 댓글/좋아요 비율 ≥ **2%** (소통형 팬덤 신호)
+- Graph API로 일부 지표가 제한될 경우:
+  - “좋아요/댓글/조회” 등 공개 지표를 대체 입력(수동/CSV)할 수 있게 하고
+  - MVP에서는 “지표가 있는 후보만 스코어링” 가능하도록 설계(미입력은 보수적 점수)
+
+---
+
+## 6) 2차 필터: 상위 콘텐츠 샘플링
+- 계정당 반응 상위 3~5개 콘텐츠만 저장(텍스트/링크/썸네일 URL)
+- 목적:
+  - 데이터/AI 비용 절감
+  - 사람이 검토할 때 “핵심만” 보게 만들기
+
+---
+
+## 7) 스코어링 모델(MVP)
+### 7.1 점수 구성(100점)
+- **Outlier Score(반응 이상치)**: 50
+- **Health Score(활동성/지속성)**: 30
+- **Commercial Intent Score(전환 신호, Gemini 텍스트 분석)**: 20 (옵션)
+
+> 캐릭터 IP 스코어링은 본 MVP 범위에서 제외(후속 확장 가능).  
+> 대신 “전환 실험에 적합한 계정” 관점의 신호에 집중.
+
+### 7.2 Outlier Score(룰 기반)
+- 팔로워 대비 평균 반응률(좋아요/댓글/조회) 구간 점수화
+- 최근 20개 중 “반응 3배 이상” outlier 콘텐츠 존재 시 가점
+
+### 7.3 Health Score(룰 기반)
+- 최근 게시일(14일/30일 기준)
+- 활동 빈도(최근 30일 포스팅 수)
+- 급격한 변화(팔로워 급증/급락) 등 플래그(가능하면)
+
+### 7.4 Commercial Intent Score(Gemini, 옵션)
+- 입력: 상위 콘텐츠 캡션/해시태그/댓글 샘플
+- Gemini 출력: CTA/구매유도/제품 언급/루틴형 콘텐츠 여부, 위험 표현(과장/의학적 주장) 플래그
+- 웰니스 관련 리스크 플래그(“질병 치료” 등)는 반드시 감지해 운영 가이드에 반영
+
+---
+
+## 8) 화면/UX 기획(웹페이지)
+### 8.1 IA
 - /login
 - /dashboard
+- /search (키워드 입력 + 플랫폼 선택 + 실행)
 - /creators (리스트/필터)
 - /creators/:id (상세)
 - /watchlists
 - /watchlists/:id
-- /experiments (실험 기록 목록)
-- /reports (스코어-성과 리포트)
-- /admin (설정/사용자/임포트)
+- /experiments (후속 연결용, 최소 입력)
+- /reports (점수-성과)
+- /admin (API/Slack/룰 파라미터/사용자)
 
-### 6.2 Dashboard (요약)
-- 카드 4개:
-  - 이번 주 신규 후보 수
-  - SHORTLIST 수
-  - ACTIVE 수
-  - PAUSED/INACTIVE 수
-- “Top Intent (상위 10)” 테이블
-- “Top Health (상위 10)” 테이블
-- 최근 활동 로그(누가 무엇을 변경했는지)
+### 8.2 Search 화면(핵심 추가)
+- 입력:
+  - 플랫폼 선택: Instagram / X (복수 선택)
+  - 키워드/해시태그(복수)
+  - 언어/국가(선택)
+  - 기간(최근 7일/30일)
+  - 팔로워 범위(기본값 포함)
+- 실행 방식:
+  - “Run Search” 버튼(수동 실행)
+  - 실행 로그(몇 개 콘텐츠/계정 수집했는지)
+- 출력:
+  - “이번 실행에서 추가된 후보 n명” + 바로 리스트로 이동
 
-### 6.3 Creators List (핵심 화면)
-- 상단 필터:
-  - 플랫폼, 카테고리 태그, 국가/언어(선택), 상태, 스코어 범위 슬라이더
-  - flags(brand_safety_risk/fraud_suspect/inactive)
-- 정렬:
-  - total_score, intent_score, health_score, 최근 게시일
-- 각 row에 표시:
-  - 프로필(플랫폼 아이콘+핸들), 팔로워(있으면), 상태 배지
-  - Health/Intent 점수(작은 바/게이지)
-  - “설명 1줄”(score_explain)
-  - 버튼: 상세보기 / Watchlist 추가
+### 8.3 Creators List
+- 필터: 플랫폼, 카테고리, 상태, 점수 범위, flags
+- 정렬: total_score / outlier_score / health_score / 최신 게시일
+- row: 핸들, 팔로워, 상태, 점수(게이지), 요약 1줄, “Slack 공유”, “Watchlist 추가”
 
-### 6.4 Creator Detail
-- 상단:
-  - 프로필 링크, 기본 메트릭, 상태 변경 드롭다운
-  - 점수 3종(Health/Intent/Total) + “왜 이런 점수?”(explain)
-- 중단:
-  - 콘텐츠 샘플(링크 리스트 + 캡션/요약)
-  - Gemini 요약 카드(타깃/톤/적합 카테고리/리스크)
-- 하단:
-  - Watchlist 포함 현황
-  - 실험 투입 기록(프로젝트명, 오퍼, 결과)
+### 8.4 Creator Detail
+- 상단: 프로필 링크, 주요 지표, 상태 변경, 점수 + “왜 이런 점수?”
+- 중단: 상위 콘텐츠 3~5개(링크/캡션 요약)
+- 하단: Watchlist 포함 현황, (선택) 실험 투입 기록
 
-### 6.5 Watchlists
-- Watchlist 생성(예: “수면 루틴 파일럿”, “단백질 음료 테스트”)
-- Watchlist 상세:
-  - 포함 크리에이터 리스트
-  - “다음 액션” 체크리스트(연락/샘플/콘텐츠 업로드)
-  - 간단 코멘트/태그
-
-### 6.6 Experiments (최소)
-- 필드:
-  - experiment_name, client_brand, product_category, offer_type
-  - creators_involved(참여 크리에이터)
-  - tracking: link/utm/coupon (텍스트)
-  - results: clicks, orders, revenue, cpa, roas (가능한 것만)
-  - notes/learned
-- 목표: **레이더 점수와 결과를 연결할 데이터**가 쌓이게 하는 것.
-
-### 6.7 Reports
-- “스코어 구간별 성과”
-  - Intent 상위 20% vs 하위 20%의 평균 주문/매출 비교
-  - Health 상위 vs 하위 비교
-- 카테고리별 성과 히트맵(옵션)
-- CSV export
+### 8.5 Slack 공유(버튼 기반)
+- 상세/리스트에서 “Slack 공유” 클릭 시:
+  - webhook으로 메시지 전송
+  - MVP 메시지 템플릿:
+    - 플랫폼, 계정, 팔로워, 핵심 지표(반응률/아웃라이어), 점수, 링크, 1줄 코멘트
 
 ---
 
-## 7) 기술 아키텍처 (Firebase 기준)
-### 7.1 스택
-- Frontend: Next.js(또는 React) + Firebase Hosting
-- Auth: Firebase Authentication (Google Workspace 로그인 권장)
+## 9) 기술 아키텍처(Firebase)
+### 9.1 스택
+- Frontend: Next.js + Firebase Hosting
+- Auth: Firebase Authentication(Workspace 권장)
 - DB: Firestore
-- Backend: Cloud Functions
-- Batch/Schedule: Cloud Scheduler + Functions (후속)
-- File: Cloud Storage (CSV 업로드)
-- AI: Gemini API (서버사이드 호출 권장)
+- Backend: Cloud Functions(커넥터 호출/스코어링/Gemini)
+- Batch: Cloud Scheduler(선택)
+- Storage: CSV/샘플 저장(선택)
+- AI: Gemini(서버사이드 호출)
 
-### 7.2 데이터 모델(Firestore)
-- users/{uid}
-  - role, name, team
-- creators/{creatorId}
-  - platform, handle, profile_url
-  - category_tags[], country, language
-  - metrics{...}
-  - scores{health,intent,total,explain,flags}
-  - status, notes
-  - created_at, updated_at
-- watchlists/{watchlistId}
-  - name, description, tags[], owner_uid
-  - creator_ids[]
-  - created_at, updated_at
-- experiments/{experimentId}
-  - name, client_brand, category, offer_type
-  - creator_ids[]
-  - tracking{...}
-  - results{...}
-  - notes, created_at, updated_at
-- activity_logs/{logId}
-  - actor_uid, action, entity_type, entity_id, timestamp
+### 9.2 주요 Cloud Functions
+- runSearch(platforms, keywords, params): 커넥터 실행 → 후보 upsert
+- scoreCreator(creatorId): 룰 기반 점수 계산(+Gemini 옵션)
+- sendToSlack(creatorId or watchlistId)
+- importCSV(file)
 
-### 7.3 보안 규칙(개요)
-- Auth required
-- role 기반 접근 제어
-- creators: Viewer read, Editor write
-- admin: all
+### 9.3 Firestore 모델(요약)
+- creators/{id}: profile + metrics + scores + status + flags + samples
+- searches/{id}: 실행 파라미터/로그/결과 요약
+- watchlists/{id}: creator_ids + notes
+- admin_settings/{id}: slack_webhook, scoring_params, api_keys_ref
+- activity_logs/{id}
 
 ---
 
-## 8) 운영 플로우 (팀이 실제로 쓰는 방법)
-1) Ops가 후보를 수동/CSV로 업로드
-2) 자동 스코어링 실행(저장 시 트리거)
-3) 리스트에서 필터 → SHORTLIST에 올림
-4) Watchlist(캠페인) 생성 후 후보를 담음
-5) 실험 투입 시 experiment 기록 생성 + 후보 상태 ACTIVE
-6) 결과 입력(가능한 최소 수치라도)
-7) Reports에서 “점수-성과 상관”을 주기적으로 확인하고 룰 수정
+## 10) 개발 마일스톤
+### M0(1주)
+- Auth + CRUD(creator/watchlist)
+- Search 화면 UI + “수동 후보 등록/CSV 업로드”
+- Slack webhook 설정 + 버튼 전송
+
+### M1(2~3주)
+- X 커넥터(API 기반)로 키워드 검색 → 후보 자동 생성
+- 룰 기반 스코어링(Outlier/Health) + 리스트 필터/정렬
+
+### M2(4주)
+- Instagram 커넥터(가능 범위 내) 적용 또는 “입력/제공 데이터 기반” 하이브리드
+- Gemini 기반 Intent 옵션 + Reports(점수 구간별 성과 비교)
 
 ---
 
-## 9) Gemini 프롬프트 설계 (서버사이드)
-### 9.1 입력 포맷(권장 JSON)
-{
-  "platform": "instagram",
-  "handle": "@xxx",
-  "category_tags": ["wellness","sleep"],
-  "samples": [
-    {"caption": "...", "hashtags": ["..."], "comments_sample": ["...", "..."]},
-    ...
-  ]
-}
-
-### 9.2 출력 포맷(엄격 JSON)
-{
-  "intent_score": 0,
-  "intent_reasons": ["..."],
-  "audience_summary": "…",
-  "content_type_tags": ["routine","review"],
-  "brand_safety_flags": ["medical_claim_risk","exaggerated_claim"],
-  "suggested_products": ["sleep","protein","low_sugar_drink"],
-  "one_line_note": "…"
-}
-
-### 9.3 프롬프트 가드레일
-- 항상 JSON만 출력
-- 과장/의학적 주장 리스크는 반드시 감지(없으면 빈 배열)
-- 확신 없으면 낮은 점수
-
----
-
-## 10) 개발 단계/마일스톤
-### M0 (1주)
-- Auth + 기본 CRUD(creator 등록/리스트/상세)
-- Watchlist CRUD
-- CSV import(Storage 업로드 → Function 파싱 → Firestore 저장)
-
-### M1 (2~3주)
-- 스코어링 룰(Health) 구현
-- Gemini 요약/Intent 스코어링 연결(Cloud Function)
-- 필터/정렬/검색 UX 완성
-
-### M2 (4주)
-- Experiments 기록 + Reports 1종(상위/하위 비교)
-- Admin(스코어 가중치/룰 파라미터 수정)
-
----
-
-## 11) Firebase Studio + Gemini에 줄 “개발 지시문” (복붙용)
-- 프로젝트 목표: 위 IA와 기능을 갖춘 내부 웹 MVP
-- 요구사항:
-  - Firebase Auth + Firestore + Hosting
-  - creators CRUD, watchlists CRUD, experiments CRUD
-  - CSV import 기능(Cloud Storage 업로드 후 파싱)
-  - 스코어 계산(룰 기반 Health + Gemini 기반 Intent)
-  - 리스트 필터/정렬/검색
-  - Reports: Intent 상위 20% vs 하위 20%의 평균 성과 비교(orders/revenue)
-  - RBAC: Viewer/Editor/Admin
-- UI:
-  - 대시보드(요약 카드 + Top tables)
-  - 리스트 테이블 + 점수 게이지 + 상태 배지
-  - 상세 페이지에 점수 설명/요약 카드 표시
-- 품질:
-  - 모든 Gemini 호출은 서버사이드로(키 보호)
-  - Firestore 보안 규칙 포함
-  - README에 배포 방법 포함
+## 11) Firebase Studio + Gemini 개발 지시문(복붙용)
+- 목표: 위 IA 및 기능을 갖춘 내부 웹 MVP를 Firebase(Hosting/Auth/Firestore/Functions)로 구현
+- 핵심 요구사항:
+  - /search에서 키워드 입력 → (X API 우선) 검색 실행 → 후보 계정 생성
+  - 후보 리스트/필터/정렬/상세
+  - 플랫폼별 룰 필터(팔로워 범위 + 반응률/아웃라이어 + 미디어 비율)
+  - Watchlist 관리
+  - Slack Incoming Webhook 연동(버튼 전송)
+  - (옵션) Instagram 커넥터는 추상화하여 구현(가능 범위 내 API/입력 기반)
+  - 모든 외부 API 및 Gemini 호출은 Cloud Functions에서만 수행(키 보호)
+  - Firestore 보안 규칙(RBAC) 포함
+  - README에 환경변수 설정(X API 키, Instagram 토큰, Slack webhook)과 배포 절차 명시
 
 ---
 
 ## 12) 리스크/주의사항
-- 소셜 플랫폼 크롤링/스크래핑은 정책/법적 리스크가 있으므로 MVP는 **수동/CSV 입력 중심**으로 시작하고, 추후 공식 API/파트너 방식으로 확장.
-- 웰니스/건강 관련 콘텐츠는 과장·의학적 주장 리스크가 높으므로 **brand_safety_flags**를 반드시 운영 프로세스에 포함.
-
----
+- “전체 사용자 대상 자동 탐색”은 공식 API로도 제한이 있을 수 있으므로, MVP는 **키워드/해시태그 기반의 합법적 수집**을 전제로 한다.
+- 웰니스 관련 콘텐츠는 과장/의학적 주장 리스크가 있어, Gemini 분석 시 risk flag를 반드시 포함하고 운영 기준을 만든다.

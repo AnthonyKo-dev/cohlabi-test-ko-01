@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Micro Creator Radar</title>
+    <title>Micro Creator Radar (Insta + X)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,14 +11,21 @@
     <div class="container">
         <header>
             <h1>Micro Creator Radar</h1>
-            <p>Discover and evaluate micro-creators for your next campaign</p>
+            <p>Keyword-based discovery for Instagram & X</p>
         </header>
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="Search by name, handle, or keyword...">
+            <div class="platform-selector">
+                <select id="platform-select">
+                    <option value="all">All Platforms</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="X">X</option>
+                </select>
+            </div>
+            <input type="text" id="search-input" placeholder="Enter keywords or hashtags...">
             <button id="search-btn">Search</button>
         </div>
         <div id="results-container" class="results-container">
-            <!-- Influencer cards will be generated here -->
+            <!-- Creator cards will be generated here -->
         </div>
     </div>
     <script src="main.js"></script>

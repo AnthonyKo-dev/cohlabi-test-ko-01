@@ -3,57 +3,62 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
     const searchInput = document.getElementById('search-input');
     const searchBtn = document.getElementById('search-btn');
+    const platformSelect = document.getElementById('platform-select');
     const resultsContainer = document.getElementById('results-container');
 
     // --- Mock Data ---
-    const influencers = [
+    const creators = [
         {
-            name: 'Wellness Wendy',
-            handle: '@wellnesswendy',
+            name: 'Insta Wellness',
+            handle: '@instawellness',
             platform: 'Instagram',
-            followers: 15000,
+            followers: 85000,
+            outlier_score: 80,
             health_score: 90,
             intent_score: 75,
-            total_score: 83,
+            total_score: 82, // Weighted average could be calculated here
             category_tags: ['wellness', 'sleep', 'protein'],
-            profilePic: 'https://i.pravatar.cc/150?u=wendy',
-            headerPic: 'https://i.pravatar.cc/600/200?u=header_wendy'
+            profilePic: 'https://i.pravatar.cc/150?u=instawellness',
+            headerPic: 'https://i.pravatar.cc/600/200?u=header_instawellness'
         },
         {
-            name: 'Techie Tom',
-            handle: '@techtom',
-            platform: 'Twitter',
-            followers: 25000,
+            name: 'X Tech Reviews',
+            handle: '@xtech',
+            platform: 'X',
+            followers: 45000,
+            outlier_score: 88,
             health_score: 85,
-            intent_score: 88,
-            total_score: 86,
+            intent_score: 80,
+            total_score: 85,
             category_tags: ['tech', 'gadgets', 'ai'],
-            profilePic: 'https://i.pravatar.cc/150?u=tom',
-            headerPic: 'https://i.pravatar.cc/600/200?u=header_tom'
+            profilePic: 'https://i.pravatar.cc/150?u=xtech',
+            headerPic: 'https://i.pravatar.cc/600/200?u=header_xtech'
         },
         {
-            name: 'Foodie Fiona',
-            handle: '@foodiefiona',
+            name: 'IG Foodie',
+            handle: '@igfoodie',
             platform: 'Instagram',
-            followers: 55000,
+            followers: 98000,
+            outlier_score: 92,
             health_score: 95,
             intent_score: 80,
-            total_score: 88,
+            total_score: 90,
             category_tags: ['food', 'recipes', 'healthy-eating'],
-            profilePic: 'https://i.pravatar.cc/150?u=fiona',
-            headerPic: 'https://i.pravatar.cc/600/200?u=header_fiona'
+            profilePic: 'https://i.pravatar.cc/150?u=igfoodie',
+            headerPic: 'https://i.pravatar.cc/600/200?u=header_igfoodie'
         },
         {
-            name: 'Senior Fitness Sam',
-            handle: '@seniorsam',
-            platform: 'TikTok',
-            followers: 42000,
+            name: 'X Fitness Coach',
+            handle: '@xfitness',
+            platform: 'X',
+            followers: 32000,
+            outlier_score: 95,
             health_score: 88,
             intent_score: 92,
-            total_score: 90,
+            total_score: 91,
             category_tags: ['senior', 'fitness', 'wellness'],
-            profilePic: 'https://i.pravatar.cc/150?u=sam',
-            headerPic: 'https://i.pravatar.cc/600/200?u=header_sam'
+            profilePic: 'https://i.pravatar.cc/150?u=xfitness',
+            headerPic: 'https://i.pravatar.cc/600/200?u=header_xfitness'
         }
     ];
 
@@ -76,46 +81,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Influencer Display Functionality ---
-    function displayInfluencers(influencerList) {
+    // --- Creator Display Functionality ---
+    function displayCreators(creatorList) {
         resultsContainer.innerHTML = '';
-        if (influencerList.length === 0) {
+        if (creatorList.length === 0) {
             resultsContainer.innerHTML = '<p>No creators found.</p>';
             return;
         }
 
-        influencerList.forEach(influencer => {
+        creatorList.forEach(creator => {
             const card = document.createElement('div');
-            card.className = 'influencer-card';
+            card.className = 'influencer-card'; // Re-using old class name
             const platformIconUrl = {
-                'Twitter': 'https://abs.twimg.com/icons/apple-touch-icon-192x192.png',
-                'Instagram': 'https://instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png',
-                'TikTok': 'https://sf-tb-sg.ibytedtos.com/obj/tiktok-web/tiktok/web/node/_next/static/images/logo-dark-e951266221f66b533a1040523fdad930.svg'
-            }[influencer.platform] || '';
+                'X': 'https://abs.twimg.com/icons/apple-touch-icon-192x192.png',
+                'Instagram': 'https://instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png'
+            }[creator.platform] || '';
 
             card.innerHTML = `
-                <div class="card-header" style="background-image: url('${influencer.headerPic}')">
-                    <img class="platform-icon" src="${platformIconUrl}" alt="${influencer.platform}">
-                    <img class="profile-pic" src="${influencer.profilePic}" alt="${influencer.name}">
+                <div class="card-header" style="background-image: url('${creator.headerPic}')">
+                    <img class="platform-icon" src="${platformIconUrl}" alt="${creator.platform}">
+                    <img class="profile-pic" src="${creator.profilePic}" alt="${creator.name}">
                 </div>
                 <div class="card-body">
-                    <h3 class="name">${influencer.name}</h3>
-                    <p class="handle">${influencer.handle}</p>
+                    <h3 class="name">${creator.name}</h3>
+                    <p class="handle">${creator.handle}</p>
                     <div class="tags-container">
-                        ${influencer.category_tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        ${creator.category_tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                     </div>
                     <div class="stats">
                         <div class="stat">
-                            <span class="stat-value">${(influencer.followers / 1000).toFixed(1)}K</span>
+                            <span class="stat-value">${(creator.followers / 1000).toFixed(1)}K</span>
                             <span class="stat-label">Followers</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-value">${influencer.health_score}</span>
-                            <span class="stat-label">Health</span>
+                            <span class="stat-value">${creator.outlier_score}</span>
+                            <span class="stat-label">Outlier</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-value">${influencer.intent_score}</span>
-                            <span class="stat-label">Intent</span>
+                            <span class="stat-value">${creator.health_score}</span>
+                            <span class="stat-label">Health</span>
                         </div>
                     </div>
                 </div>
@@ -125,25 +129,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Search Functionality ---
-    function searchInfluencers() {
+    function searchCreators() {
         const searchTerm = searchInput.value.toLowerCase();
-        const filteredInfluencers = influencers.filter(influencer =>
-            influencer.name.toLowerCase().includes(searchTerm) ||
-            influencer.handle.toLowerCase().includes(searchTerm) ||
-            influencer.category_tags.some(tag => tag.toLowerCase().includes(searchTerm))
-        );
-        displayInfluencers(filteredInfluencers);
+        const selectedPlatform = platformSelect.value;
+
+        const filteredCreators = creators.filter(creator => {
+            const matchesPlatform = selectedPlatform === 'all' || creator.platform === selectedPlatform;
+            const matchesSearch = searchTerm === '' ||
+                creator.name.toLowerCase().includes(searchTerm) ||
+                creator.handle.toLowerCase().includes(searchTerm) ||
+                creator.category_tags.some(tag => tag.toLowerCase().includes(searchTerm));
+            return matchesPlatform && matchesSearch;
+        });
+        displayCreators(filteredCreators);
     }
 
-    searchBtn.addEventListener('click', searchInfluencers);
+    searchBtn.addEventListener('click', searchCreators);
     searchInput.addEventListener('keyup', (event) => {
         if (event.key === 'Enter') {
-            searchInfluencers();
+            searchCreators();
         }
     });
+    platformSelect.addEventListener('change', searchCreators);
+
 
     // --- Initial Load ---
     loadTheme();
-    displayInfluencers(influencers); // Display all influencers on initial load
+    displayCreators(creators); // Display all creators on initial load
 });
 

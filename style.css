@@ -77,6 +77,28 @@ body.dark-mode header p {
     margin-bottom: 40px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     border-radius: 50px;
+    overflow: hidden; /* To make the border-radius apply to children */
+}
+
+.platform-selector {
+    background-color: var(--card-bg-color);
+    border-right: 1px solid var(--bg-color);
+}
+
+body.dark-mode .platform-selector {
+    border-right: 1px solid #333;
+}
+
+#platform-select {
+    background: transparent;
+    border: none;
+    padding: 15px;
+    font-size: 1.1em;
+    color: var(--text-color);
+    outline: none;
+    -webkit-appearance: none; /* Removes default browser styling */
+    -moz-appearance: none;
+    appearance: none;
 }
 
 #search-input {
@@ -84,7 +106,7 @@ body.dark-mode header p {
     border: none;
     padding: 15px 25px;
     font-size: 1.1em;
-    border-radius: 50px 0 0 50px;
+    border-radius: 0; /* Updated from 50px 0 0 50px */
     background-color: var(--card-bg-color);
     color: var(--text-color);
     outline: none;
