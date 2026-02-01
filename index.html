@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotto Number Generator</title>
+    <title>Influencer Radar</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button id="theme-toggle-btn">☀️</button>
+    <button id="theme-toggle-btn">🌙</button>
     <div class="container">
-        <div class="card">
-            <h1>Lotto Number Generator</h1>
-            <div class="numbers-container">
-                <!-- Numbers will be generated here -->
-            </div>
-            <button id="generate-btn">Generate Numbers</button>
+        <header>
+            <h1>Influencer Radar</h1>
+            <p>Discover top influencers on Instagram and Twitter</p>
+        </header>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search by name, handle, or keyword...">
+            <button id="search-btn">Search</button>
+        </div>
+        <div id="results-container" class="results-container">
+            <!-- Influencer cards will be generated here -->
         </div>
     </div>
     <script src="main.js"></script>
