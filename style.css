@@ -5,11 +5,13 @@
     --text-color: #334155;
     --text-light: #64748b;
     --border-color: #e2e8f0;
-    --primary-color: #3b82f6;
+    --primary-color: #af00ff; /* Playful Purple */
+    --accent-purple: #e18cff; /* Creative Purple */
+    --dark-purple: #870091; /* Curious Purple */
     --platform-x-color: #000000;
     --platform-instagram-color: #c13584;
-    --high-priority-bg: #dbeafe; /* Blue-50 */
-    --high-priority-text: #1e40af; /* Blue-800 */
+    --high-priority-bg: #f3e5f5; /* Lighter purple background */
+    --high-priority-text: #4b0073; /* Imaginative Purple for text */
 }
 
 body.dark-mode {
@@ -19,8 +21,9 @@ body.dark-mode {
     --text-color: #e2e8f0;
     --text-light: #94a3b8;
     --border-color: #334155;
-    --high-priority-bg: #1e3a8a; /* Darker blue */
-    --high-priority-text: #bfdbfe; /* Lighter blue */
+    --primary-color: #e18cff; /* Creative Purple for dark mode primary */
+    --high-priority-bg: #4b0073; /* Imaginative Purple for dark mode high priority bg */
+    --high-priority-text: #e18cff; /* Creative Purple for dark mode high priority text */
 }
 
 * {
@@ -354,7 +357,7 @@ body.dark-mode .platform-tab.active {
 }
 
 body.dark-mode .creator-dot.emphasized {
-    border-color: #8cafff; /* Lighter primary color for dark mode */
+    border-color: var(--accent-purple); /* Lighter primary color for dark mode */
 }
 
 .creator-dot.faded {
