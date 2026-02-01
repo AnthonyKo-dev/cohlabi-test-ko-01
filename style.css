@@ -366,8 +366,8 @@ body.dark-mode .creator-dot.emphasized {
 
 .radar-tooltip {
     position: absolute;
-    background-color: #333;
-    color: white;
+    background-color: var(--card-bg);
+    color: var(--text-color);
     padding: 8px 12px;
     border-radius: 6px;
     font-size: 0.9em;
@@ -376,4 +376,5 @@ body.dark-mode .creator-dot.emphasized {
     display: none; /* Hidden by default */
     pointer-events: none; /* Tooltip doesn't block mouse events */
     transform: translate(-50%, -110%);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Add a subtle shadow */
 }
